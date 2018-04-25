@@ -2,7 +2,7 @@
 
 > A cookie-based session store.
 
-[![ReportCard][reportcard-image]][reportcard-url] [![GoDoc][godoc-image]][godoc-url] [![License][license-image]][license-url]
+[![Build][Build-Status-Image]][Build-Status-Url] [![Coverage][Coverage-Image]][Coverage-Url] [![ReportCard][reportcard-image]][reportcard-url] [![GoDoc][godoc-image]][godoc-url] [![License][license-image]][license-url]
 
 ## Quick Start
 
@@ -97,6 +97,10 @@ $ ./server
 
     Copyright (c) 2018 Lyric
 
+[Build-Status-Url]: https://travis-ci.org/go-session/cookie
+[Build-Status-Image]: https://travis-ci.org/go-session/cookie.svg?branch=master
+[Coverage-Url]: https://coveralls.io/github/go-session/cookie?branch=master
+[Coverage-Image]: https://coveralls.io/repos/github/go-session/cookie/badge.svg?branch=master
 [reportcard-url]: https://goreportcard.com/report/gopkg.in/go-session/cookie.v1
 [reportcard-image]: https://goreportcard.com/badge/gopkg.in/go-session/cookie.v1
 [godoc-url]: https://godoc.org/gopkg.in/go-session/cookie.v1
