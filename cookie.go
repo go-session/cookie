@@ -51,14 +51,13 @@ type managerStore struct {
 }
 
 func (s *managerStore) Create(ctx context.Context, sid string, expired int64) (session.Store, error) {
-	values := make(map[string]string)
 	return &store{
 		opts:    s.opts,
 		ctx:     ctx,
 		sid:     sid,
 		cookie:  s.cookie,
 		expired: expired,
-		values:  values,
+		values:  make(map[string]interface{}),
 	}, nil
 }
 
@@ -70,7 +69,14 @@ func (s *managerStore) Update(ctx context.Context, sid string, expired int64) (s
 
 	cookie, err := req.Cookie(s.opts.cookieName)
 	if err != nil {
-		return s.Create(ctx, sid, expired)
+		return &store{
+			opts:    s.opts,
+			ctx:     ctx,
+			sid:     sid,
+			cookie:  s.cookie,
+			expired: expired,
+			values:  make(map[string]interface{}),
+		}, nil
 	}
 
 	res, ok := session.FromResContext(ctx)
@@ -81,14 +87,13 @@ func (s *managerStore) Update(ctx context.Context, sid string, expired int64) (s
 	cookie.MaxAge = int(expired)
 	http.SetCookie(res, cookie)
 
-	var values map[string]string
+	var values map[string]interface{}
 	err = s.cookie.Decode(sid, cookie.Value, &values)
 	if err != nil {
 		return nil, err
 	}
-
 	if values == nil {
-		values = make(map[string]string)
+		values = make(map[string]interface{})
 	}
 
 	return &store{
@@ -135,6 +140,56 @@ func (s *managerStore) Check(ctx context.Context, sid string) (bool, error) {
 	return err == nil, nil
 }
 
+func (s *managerStore) Refresh(ctx context.Context, oldsid, sid string, expired int64) (session.Store, error) {
+	req, ok := session.FromReqContext(ctx)
+	if !ok {
+		return nil, nil
+	}
+
+	cookie, err := req.Cookie(s.opts.cookieName)
+	if err != nil {
+		return &store{
+			opts:    s.opts,
+			ctx:     ctx,
+			sid:     sid,
+			cookie:  s.cookie,
+			expired: expired,
+			values:  make(map[string]interface{}),
+		}, nil
+	}
+
+	var values map[string]interface{}
+	err = s.cookie.Decode(oldsid, cookie.Value, &values)
+	if err != nil {
+		return nil, err
+	} else if values == nil {
+		values = make(map[string]interface{})
+	}
+
+	encoded, err := s.cookie.Encode(sid, values)
+	if err != nil {
+		return nil, err
+	}
+
+	cookie.Value = encoded
+	cookie.Expires = time.Now().Add(time.Duration(expired) * time.Second)
+	cookie.MaxAge = int(expired)
+	res, ok := session.FromResContext(ctx)
+	if !ok {
+		return nil, nil
+	}
+	http.SetCookie(res, cookie)
+
+	return &store{
+		opts:    s.opts,
+		ctx:     ctx,
+		sid:     sid,
+		cookie:  s.cookie,
+		expired: expired,
+		values:  values,
+	}, nil
+}
+
 func (s *managerStore) Close() error {
 	return nil
 }
@@ -145,7 +200,7 @@ type store struct {
 	sid     string
 	ctx     context.Context
 	expired int64
-	values  map[string]string
+	values  map[string]interface{}
 	cookie  *securecookie.SecureCookie
 }
 
@@ -157,20 +212,20 @@ func (s *store) SessionID() string {
 	return s.sid
 }
 
-func (s *store) Set(key, value string) {
+func (s *store) Set(key string, value interface{}) {
 	s.Lock()
 	s.values[key] = value
 	s.Unlock()
 }
 
-func (s *store) Get(key string) (string, bool) {
+func (s *store) Get(key string) (interface{}, bool) {
 	s.RLock()
-	defer s.RUnlock()
 	val, ok := s.values[key]
+	s.RUnlock()
 	return val, ok
 }
 
-func (s *store) Delete(key string) string {
+func (s *store) Delete(key string) interface{} {
 	s.RLock()
 	v, ok := s.values[key]
 	s.RUnlock()
@@ -184,18 +239,19 @@ func (s *store) Delete(key string) string {
 
 func (s *store) Flush() error {
 	s.Lock()
-	s.values = make(map[string]string)
+	s.values = make(map[string]interface{})
 	s.Unlock()
 	return s.Save()
 }
 
 func (s *store) Save() error {
 	s.RLock()
-	defer s.RUnlock()
 	encoded, err := s.cookie.Encode(s.sid, s.values)
 	if err != nil {
+		s.RUnlock()
 		return err
 	}
+	s.RUnlock()
 
 	cookie := &http.Cookie{
 		Name:     s.opts.cookieName,

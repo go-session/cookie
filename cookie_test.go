@@ -19,8 +19,6 @@ func TestCookie(t *testing.T) {
 	sess := session.NewManager(
 		session.SetCookieName("test_cookie"),
 		session.SetSign([]byte("sign")),
-		session.SetExpired(10),
-		session.SetCookieLifeTime(60),
 		session.SetStore(NewCookieStore(
 			SetCookieName("test_cookie_store"),
 			SetHashKey(hashKey),
@@ -36,12 +34,7 @@ func TestCookie(t *testing.T) {
 
 		if r.URL.Query().Get("login") == "1" {
 			foo, ok := store.Get("foo")
-			if !ok || foo != "bar" {
-				t.Error("Not expected value:", foo)
-				return
-			}
-
-			fmt.Fprint(w, "ok")
+			fmt.Fprintf(w, "%s:%v", foo, ok)
 			return
 		}
 
@@ -86,9 +79,9 @@ func TestCookie(t *testing.T) {
 	}
 
 	buf, _ = ioutil.ReadAll(res.Body)
-	if string(buf) != "ok" {
+	res.Body.Close()
+	if string(buf) != "bar:true" {
 		t.Error("Not expected value:", string(buf))
 		return
 	}
-	res.Body.Close()
 }
