@@ -1,6 +1,4 @@
-# cookie
-
-> A cookie-based session store.
+# Cookie store for [Session](https://github.com/go-session/session)
 
 [![Build][Build-Status-Image]][Build-Status-Url] [![Coverage][Coverage-Image]][Coverage-Url] [![ReportCard][reportcard-image]][reportcard-url] [![GoDoc][godoc-image]][godoc-url] [![License][license-image]][license-url]
 
