@@ -1,13 +1,13 @@
 # Cookie store for [Session](https://github.com/go-session/session)
 
-[![Build][Build-Status-Image]][Build-Status-Url] [![Coverage][Coverage-Image]][Coverage-Url] [![ReportCard][reportcard-image]][reportcard-url] [![GoDoc][godoc-image]][godoc-url] [![License][license-image]][license-url]
+[![Build][Build-Status-Image]][Build-Status-Url] [![Codecov][codecov-image]][codecov-url] [![ReportCard][reportcard-image]][reportcard-url] [![GoDoc][godoc-image]][godoc-url] [![License][license-image]][license-url]
 
 ## Quick Start
 
 ### Download and install
 
 ```bash
-$ go get -u -v gopkg.in/go-session/cookie.v1
+$ go get -u -v github.com/go-session/cookie
 ```
 
 ### Create file `server.go`
@@ -20,8 +20,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"gopkg.in/go-session/cookie.v1"
-	"gopkg.in/session.v2"
+	"github.com/go-session/cookie"
+	"github.com/go-session/session"
 )
 
 var (
@@ -30,8 +30,6 @@ var (
 
 func main() {
 	session.InitManager(
-		session.SetCookieName("demo_session_id"),
-		session.SetSign([]byte("sign")),
 		session.SetStore(
 			cookie.NewCookieStore(
 				cookie.SetCookieName("demo_cookie_store_id"),
@@ -97,11 +95,11 @@ $ ./server
 
 [Build-Status-Url]: https://travis-ci.org/go-session/cookie
 [Build-Status-Image]: https://travis-ci.org/go-session/cookie.svg?branch=master
-[Coverage-Url]: https://coveralls.io/github/go-session/cookie?branch=master
-[Coverage-Image]: https://coveralls.io/repos/github/go-session/cookie/badge.svg?branch=master
-[reportcard-url]: https://goreportcard.com/report/gopkg.in/go-session/cookie.v1
-[reportcard-image]: https://goreportcard.com/badge/gopkg.in/go-session/cookie.v1
-[godoc-url]: https://godoc.org/gopkg.in/go-session/cookie.v1
-[godoc-image]: https://godoc.org/gopkg.in/go-session/cookie.v1?status.svg
+[codecov-url]: https://codecov.io/gh/go-session/cookie
+[codecov-image]: https://codecov.io/gh/go-session/cookie/branch/master/graph/badge.svg
+[reportcard-url]: https://goreportcard.com/report/github.com/go-session/cookie
+[reportcard-image]: https://goreportcard.com/badge/github.com/go-session/cookie
+[godoc-url]: https://godoc.org/github.com/go-session/cookie
+[godoc-image]: https://godoc.org/github.com/go-session/cookie?status.svg
 [license-url]: http://opensource.org/licenses/MIT
 [license-image]: https://img.shields.io/npm/l/express.svg

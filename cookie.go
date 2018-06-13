@@ -6,8 +6,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/go-session/session"
 	"github.com/gorilla/securecookie"
-	"gopkg.in/session.v2"
 )
 
 var (

@@ -8,7 +8,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"gopkg.in/session.v2"
+	"github.com/go-session/session"
 )
 
 var (
