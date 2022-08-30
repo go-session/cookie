@@ -14,15 +14,15 @@ var defaultOptions = options{
 }
 
 type options struct {
-	cookieName string
-	secure     bool
-	hashKey    []byte
 	hashFunc   func() hash.Hash
-	blockKey   []byte
 	blockFunc  func([]byte) (cipher.Block, error)
+	cookieName string
+	hashKey    []byte
+	blockKey   []byte
 	maxLength  int
 	maxAge     int
 	minAge     int
+	secure     bool
 }
 
 // Option A cookie parameter options
