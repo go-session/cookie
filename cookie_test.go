@@ -3,17 +3,15 @@ package cookie
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
-	"github.com/go-session/session"
+	"github.com/go-session/session/v3"
 )
 
-var (
-	hashKey = []byte("FF51A553-72FC-478B-9AEF-93D6F506DE91")
-)
+var hashKey = []byte("FF51A553-72FC-478B-9AEF-93D6F506DE91")
 
 func TestCookie(t *testing.T) {
 	sess := session.NewManager(
@@ -55,7 +53,7 @@ func TestCookie(t *testing.T) {
 		return
 	}
 
-	buf, _ := ioutil.ReadAll(res.Body)
+	buf, _ := io.ReadAll(res.Body)
 	if string(buf) != "ok" {
 		t.Error("Not expected value:", string(buf))
 		return
@@ -78,7 +76,7 @@ func TestCookie(t *testing.T) {
 		return
 	}
 
-	buf, _ = ioutil.ReadAll(res.Body)
+	buf, _ = io.ReadAll(res.Body)
 	res.Body.Close()
 	if string(buf) != "bar:true" {
 		t.Error("Not expected value:", string(buf))

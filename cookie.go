@@ -6,7 +6,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/go-session/session"
+	"github.com/go-session/session/v3"
 	"github.com/gorilla/securecookie"
 )
 
@@ -46,8 +46,8 @@ func NewCookieStore(opt ...Option) session.ManagerStore {
 }
 
 type managerStore struct {
-	opts   options
 	cookie *securecookie.SecureCookie
+	opts   options
 }
 
 func (s *managerStore) Create(ctx context.Context, sid string, expired int64) (session.Store, error) {
@@ -171,12 +171,12 @@ func newStore(ctx context.Context, s *managerStore, sid string, expired int64, v
 
 type store struct {
 	sync.RWMutex
-	opts    options
-	cookie  *securecookie.SecureCookie
-	sid     string
 	ctx     context.Context
-	expired int64
+	cookie  *securecookie.SecureCookie
 	values  map[string]interface{}
+	sid     string
+	opts    options
+	expired int64
 }
 
 func (s *store) Context() context.Context {
